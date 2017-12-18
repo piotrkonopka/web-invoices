@@ -1,0 +1,196 @@
+.container
+    .row
+        .col-lg-12
+            .panel.panel-info
+                .panel-heading 
+                    h4 {{ invoice.labels.formName }}
+                
+                .panel-body
+                    p(ng-hide="invoice.isDataLoaded()") {{ invoice.labels.loadingMsg }}
+                    
+                    form.form-horizontal(ng-show="invoice.isDataLoaded()", name="invoiceForm")
+                        .form-group
+                            label.col-sm-3.control-label(for="invoiceNumber") 
+                                | {{ invoice.labels.invoiceNumber }}
+                            .col-sm-3
+                                input.form-control( type="text", name="invoiceNumber", 
+                                                    placeholder="Numer faktury", 
+                                                    ng-model="invoice.invoice.number",
+                                                    maxlength="30", required, autofocus )
+
+                        .form-group
+                            label.col-sm-3.control-label(for="myCompany") 
+                                | {{ invoice.labels.myCompany }}
+                            .col-sm-5
+                                output.form-control( name="myCompany" )
+                                    | {{ invoice.myCompany.name }}
+
+                        .form-group
+                            label.col-sm-3.control-label(for="clientName") 
+                                | {{ invoice.labels.clientName }}
+                            .col-sm-5
+                                input.form-control( type="text", name="clientName", 
+                                                    placeholder="Nazwa klienta", 
+                                                    ng-model="invoice.invoice.client.name",
+                                                    maxlength="50", required )
+
+                        .form-group
+                            label.col-sm-3.control-label(for="issueDate") 
+                                | {{ invoice.labels.issueDate }}
+                            .col-sm-3
+                                input.form-control( type="date", name="issueDate",
+                                                    ng-model="invoice.issueDateObj",
+                                                    pattern="^[0-9]{4}-[0-9]{2}-[0-9]{2}$",
+                                                    ng-change="invoice.issueDateChange()",
+                                                    required )
+
+                        .form-group
+                            label.col-sm-3.control-label(for="grossValue") 
+                                | {{ invoice.labels.grossValue }}
+                            .col-sm-3
+                                output.form-control( name="grossValue" )
+                                    | {{ invoice.invoice.grossValue }}
+
+                .panel-footer
+                    button.btn.btn-success( type="button", 
+                                            aria-label="Save", 
+                                            ng-disabled="!invoiceForm.$valid",
+                                            ng-click="invoice.saveInvoice()")
+                        span.glyphicon.glyphicon-floppy-save(aria-hidden="true") 
+                        span  {{ invoice.labels.saveButton }}
+                        
+                    .pull-right
+                        button.btn.btn-default.btn-sm(type="button", aria-label="Cancel", ng-click="invoice.goBack()")
+                            span.glyphicon.glyphicon-remove(aria-hidden="true") 
+                            span  {{ invoice.labels.goBackButton }}  
+
+    .row
+        .col-lg-12
+            .panel.panel-info
+                .panel-heading 
+                    h4 {{ invoice.labels.tableName }}
+                
+                .panel-body
+                    p(ng-hide="invoice.invoice.items.length > 0") {{ invoice.labels.noItemsMsg }}
+                    
+                    .table-responsive(ng-show="invoice.invoice.items.length > 0")
+                        table.table.table-striped
+                            thead
+                                tr
+                                    td(ng-repeat="columnName in invoice.labels.tableCols")
+                                        | {{ columnName }}
+                                    td
+
+                            tbody
+                                tr(ng-repeat="item in invoice.invoice.items track by $index")
+                                    td {{ item.name }}
+                                    td {{ item.quantity }}
+                                    td {{ item.netPrice }}
+                                    td {{ item.netValue }}
+                                    td {{ item.vatRateId }}
+                                    td {{ item.vatValue }}
+                                    td {{ item.grossValue }}
+                                    td
+                                        button.btn.btn-primary.btn-sm(type="button", aria-label="Edit", ng-click="invoice.editItem($index)")
+                                            span.glyphicon.glyphicon-pencil(aria-hidden="true")
+
+                                        button.btn.btn-danger.btn-sm(type="button", aria-label="Delete", ng-click="invoice.deleteItem(item.name)")
+                                            span.glyphicon.glyphicon-trash(aria-hidden="true")
+
+    .row
+        .col-lg-12
+            .panel.panel-info(ng-show="invoice.itemEdit")
+                .panel-heading
+                    h4(ng-show="invoice.newItemEdit") {{ invoice.labels.newItemLabel }}
+                    h4(ng-hide="invoice.newItemEdit") {{ invoice.labels.existedItemLabel }}
+
+                .panel-body
+                    form.form-horizontal( name="newItemForm" )
+                        .form-group
+                            label.col-sm-2.control-label(for="newItemName") 
+                                | {{ invoice.labels.newItem.name }}
+                            .col-sm-3
+                                input.form-control( type="text", name="newItemName", 
+                                                    placeholder="Nazwa", 
+                                                    ng-model="invoice.newItem.name",
+                                                    maxlength="30", required )
+
+                        .form-group
+                            label.col-sm-2.control-label(for="newItemQuantity") 
+                                | {{ invoice.labels.newItem.quantity }}
+                            .col-sm-2
+                                input.form-control( type="number", name="newItemQuantity", 
+                                                    ng-model="invoice.newItem.quantity",
+                                                    ng-change="invoice.newItemChange()",
+                                                    min="0", step="1" required )
+
+                        .form-group
+                            label.col-sm-2.control-label(for="newItemNetPrice") 
+                                | {{ invoice.labels.newItem.netPrice }}
+                            .col-sm-2
+                                input.form-control( type="number", name="newItemNetPrice", 
+                                                    ng-model="invoice.newItem.netPrice",
+                                                    ng-change="invoice.newItemChange()",
+                                                    min="0", step="0.01", required )
+
+                        .form-group
+                            label.col-sm-2.control-label(for="newItemNetValue") 
+                                | {{ invoice.labels.newItem.netValue }}
+                            .col-sm-3
+                                output.form-control( name="newItemNetValue" )
+                                    | {{ invoice.newItem.netValue }}
+
+                        .form-group
+                            label.col-sm-2.control-label(for="newItemVatRateId") 
+                                | {{ invoice.labels.newItem.vatRateId }}
+                            .col-sm-2
+                                select.form-control( name="newItemVatRateId", 
+                                                    ng-model="invoice.newItem.vatRateId",
+                                                    ng-change="invoice.newItemChange()",
+                                                    ng-options="option.id as option.name for option in invoice.vatRates track by option.id",
+                                                    pattern="^[1-9]\d*$",
+                                                    required )
+
+                        .form-group
+                            label.col-sm-2.control-label(for="newItemVatValue") 
+                                | {{ invoice.labels.newItem.vatValue }}
+                            .col-sm-3
+                                output.form-control( name="newItemVatValue" )
+                                    | {{ invoice.newItem.vatValue }}
+
+                        .form-group
+                            label.col-sm-2.control-label(for="newItemGrossValue") 
+                                | {{ invoice.labels.newItem.grossValue }}
+                            .col-sm-3
+                                output.form-control( name="newItemGrossValue" )
+                                    | {{ invoice.newItem.grossValue }}
+
+                .panel-footer
+                    button.btn.btn-success( type="button", 
+                                            aria-label="Save new item", 
+                                            ng-disabled="!newItemForm.$valid",
+                                            ng-show="invoice.newItemEdit"
+                                            ng-click="invoice.saveNewItem()")
+                        span.glyphicon.glyphicon-floppy-save(aria-hidden="true") 
+                        span  {{ invoice.labels.saveNewItemButton }}
+                        
+                    button.btn.btn-success( type="button", 
+                                            aria-label="Save edited item", 
+                                            ng-disabled="!newItemForm.$valid",
+                                            ng-hide="invoice.newItemEdit"
+                                            ng-click="invoice.saveEditedItem()")
+                        span.glyphicon.glyphicon-floppy-save(aria-hidden="true") 
+                        span  {{ invoice.labels.saveEditedItemButton }}
+                        
+                    .pull-right
+                        button.btn.btn-default(type="button", aria-label="Cancel", ng-click="invoice.cancelItemEditing()")
+                            span.glyphicon.glyphicon-remove(aria-hidden="true") 
+                            span  {{ invoice.labels.cancelItemEditingButton }} 
+
+            .panel(ng-hide="invoice.itemEdit")
+                .panel-body
+                    button.btn.btn-primary( type="button", 
+                                            aria-label="Add new item", 
+                                            ng-click="invoice.addNewItem()")
+                        span.glyphicon.glyphicon-plus(aria-hidden="true") 
+                        span  {{ invoice.labels.addNewItemButton }}

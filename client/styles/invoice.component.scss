@@ -1,0 +1,20 @@
+$red: #c00;
+$pink: #fee;
+
+.panel {
+    input:invalid {
+        background-color: $pink;
+        border: 1px solid $red;
+    }
+    
+    input:focus:invalid {
+        outline: none;
+    }
+
+    select {
+        &.ng-invalid {
+            background-color: $pink;
+            border: 1px solid $red;
+        }
+    }
+}

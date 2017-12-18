@@ -1,0 +1,35 @@
+.container
+    .row
+        .col-lg-10.col-lg-offset-1
+            .panel.panel-info
+                .panel-heading 
+                    h4 {{ invoices.labels.tableName }}
+                
+                .panel-body
+                    p(ng-hide="invoices.loaded") {{ invoices.labels.loadingMsg }}
+
+                    .table-responsive(ng-show="invoices.loaded")
+                        table.table.table-striped
+                            thead
+                                tr
+                                    td(ng-repeat="columnName in invoices.labels.tableCols")
+                                        | {{ columnName }}
+                                    td
+
+                            tbody
+                                tr(ng-repeat="invoice in invoices.invoices")
+                                    td {{ invoice.number }}
+                                    td {{ invoice.client.name }}
+                                    td {{ invoice.issueDate | date:'dd.MM.yyyy' }}
+                                    td {{ invoice.grossValue }}
+                                    td
+                                        button.btn.btn-primary.btn-sm(type="button", aria-label="Edit", ng-click="invoices.editInvoice(invoice.id)")
+                                            span.glyphicon.glyphicon-pencil(aria-hidden="true")
+
+                                        button.btn.btn-danger.btn-sm(type="button", aria-label="Delete", ng-click="invoices.deleteInvoice(invoice.id)")
+                                            span.glyphicon.glyphicon-trash(aria-hidden="true")
+
+                .panel-footer
+                    button.btn.btn-success(type="button", aria-label="Add", ng-click="invoices.addInvoice()", autofocus)
+                        span.glyphicon.glyphicon-plus(aria-hidden="true") 
+                        span  {{ invoices.labels.addButton }}

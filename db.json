@@ -1,0 +1,94 @@
+{
+  "vat-rates": [
+    {
+      "id": 1,
+      "name": "23%",
+      "symbol": "23%",
+      "rate": 0.23
+    },
+    {
+      "id": 2,
+      "name": "8%",
+      "symbol": "8%",
+      "rate": 0.08
+    },
+    {
+      "id": 3,
+      "name": "5%",
+      "symbol": "5%",
+      "rate": 0.05
+    },
+    {
+      "id": 4,
+      "name": "0$",
+      "symbol": "0%",
+      "rate": 0
+    },
+    {
+      "id": 5,
+      "name": "Zwolnione",
+      "symbol": "zw",
+      "rate": 0
+    },
+    {
+      "id": 6,
+      "name": "Nieopodatkowane",
+      "symbol": "niop.",
+      "rate": 0
+    }
+  ],
+  "my-company": {
+    "name": "My company"
+  },
+  "invoices": [
+    {
+      "client": {
+        "name": "Klient Z"
+      },
+      "number": "Faktura A",
+      "issueDate": "2017-10-09",
+      "grossValue": 59.04,
+      "items": [
+        {
+          "name": "Pozycja A",
+          "quantity": 4,
+          "netPrice": 12,
+          "netValue": 48,
+          "vatRateId": 1,
+          "vatValue": 11.04,
+          "grossValue": 59.04
+        }
+      ],
+      "id": 4
+    },
+    {
+      "client": {
+        "name": "Inny klient"
+      },
+      "number": "Faktura 123",
+      "issueDate": "2017-12-06",
+      "grossValue": 1192.2,
+      "items": [
+        {
+          "name": "Pozycja #1",
+          "quantity": 10,
+          "netPrice": 99,
+          "netValue": 990,
+          "vatRateId": 2,
+          "vatValue": 79.2,
+          "grossValue": 1069.2
+        },
+        {
+          "name": "Pozycja #2",
+          "quantity": 1,
+          "netPrice": 100,
+          "netValue": 100,
+          "vatRateId": 1,
+          "vatValue": 23,
+          "grossValue": 123
+        }
+      ],
+      "id": 5
+    }
+  ]
+}
